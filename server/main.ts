@@ -6,17 +6,12 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { AppModule } from "./app.module";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
-import { buildCorsConfig } from "./_core/cors";
+import { buildCorsConfig, resolveAllowedOrigins } from "./_core/cors";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const rawAllowedOrigins = process.env.CORS_ORIGIN ?? [
-    "https://healthcare-ve5c.vercel.app",
-    "https://healthcare-qu79.vercel.app",
-    "http://localhost:8081",
-    "http://127.0.0.1:8081",
-  ].join(",");
+  const rawAllowedOrigins = resolveAllowedOrigins(process.env.CORS_ORIGIN).join(",");
 
   app.enableCors(buildCorsConfig(rawAllowedOrigins));
 

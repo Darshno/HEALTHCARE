@@ -7,7 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { isAllowedOrigin, parseAllowedOrigins } from "./cors";
+import { isAllowedOrigin, resolveAllowedOrigins } from "./cors";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -32,13 +32,7 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  const rawAllowedOrigins = process.env.CORS_ORIGIN ?? [
-    "https://healthcare-ve5c.vercel.app",
-    "https://healthcare-qu79.vercel.app",
-    "http://localhost:8081",
-    "http://127.0.0.1:8081",
-  ].join(",");
-  const allowedOrigins = parseAllowedOrigins(rawAllowedOrigins);
+  const allowedOrigins = resolveAllowedOrigins(process.env.CORS_ORIGIN);
 
   app.use((req, res, next) => {
     const origin = req.headers.origin;

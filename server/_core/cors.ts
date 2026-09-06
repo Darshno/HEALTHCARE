@@ -1,3 +1,10 @@
+export const DEFAULT_ALLOWED_ORIGINS = [
+  "https://healthcare-ve5c.vercel.app",
+  "https://healthcare-qu79.vercel.app",
+  "http://localhost:8081",
+  "http://127.0.0.1:8081",
+];
+
 export function parseAllowedOrigins(rawOrigins?: string): string[] {
   if (!rawOrigins) return [];
 
@@ -5,6 +12,16 @@ export function parseAllowedOrigins(rawOrigins?: string): string[] {
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
+}
+
+export function resolveAllowedOrigins(rawOrigins?: string): string[] {
+  const configuredOrigins = parseAllowedOrigins(rawOrigins);
+
+  if (configuredOrigins.includes("*")) {
+    return ["*"];
+  }
+
+  return [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins])];
 }
 
 export function isAllowedOrigin(origin: string | undefined, allowedOrigins: string[]): boolean {

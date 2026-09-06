@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAllowedOrigin, parseAllowedOrigins } from "../server/_core/cors";
+import { isAllowedOrigin, parseAllowedOrigins, resolveAllowedOrigins } from "../server/_core/cors";
 
 describe("cors", () => {
   it("allows the deployed Vercel origin and local app origin while rejecting unknown domains", () => {
@@ -12,5 +12,12 @@ describe("cors", () => {
     expect(isAllowedOrigin("http://localhost:8081", origins)).toBe(true);
     expect(isAllowedOrigin("http://127.0.0.1:8081", origins)).toBe(true);
     expect(isAllowedOrigin("https://evil.example", origins)).toBe(false);
+  });
+
+  it("keeps the current frontend allowed when Render has a stale CORS_ORIGIN", () => {
+    const origins = resolveAllowedOrigins("https://healthcare-qu79.vercel.app");
+
+    expect(isAllowedOrigin("https://healthcare-ve5c.vercel.app", origins)).toBe(true);
+    expect(isAllowedOrigin("https://healthcare-qu79.vercel.app", origins)).toBe(true);
   });
 });
