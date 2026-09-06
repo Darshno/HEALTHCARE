@@ -85,6 +85,7 @@ export class AuthService {
         { email: normalizedIdentifier.toLowerCase() },
         { phone },
       ],
+      relations: ["hospital"],
     });
     if (!user) {
       user = this.userRepo.create({

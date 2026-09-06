@@ -354,6 +354,63 @@ export async function authenticateUser(
   });
 
   if (!found) {
+    const baseUrl = getBaseApiUrl();
+    if (baseUrl) {
+      try {
+        const response = await fetch(`${baseUrl}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ identifier: query, password: passcode }),
+        });
+
+        if (response.ok) {
+          const data = (await response.json()) as {
+            accessToken: string;
+            user: {
+              id: number;
+              name: string | null;
+              role: string;
+              phone: string | null;
+              email: string | null;
+              hospitalId: number;
+              hospital?: { name?: string };
+            };
+          };
+          const roleMap: Record<string, UserRole> = {
+            CHIEF_DOCTOR: "chief_doctor",
+            chief_doc: "chief_doctor",
+            DOCTOR: "doctor",
+            doctor: "doctor",
+            ASHA_WORKER: "asha_worker",
+            asha: "asha_worker",
+            RECEPTIONIST: "receptionist",
+            receptionist: "receptionist",
+          };
+          const role = roleMap[data.user.role];
+          if (role && (!targetRole || role === targetRole)) {
+            const profile = {
+              id: String(data.user.id),
+              name: data.user.name || query,
+              role,
+              phone: data.user.phone || (/^\+?\d[\d\s-]{6,}$/.test(query) ? query : undefined),
+              email: data.user.email || undefined,
+              facilityName: data.user.hospital?.name || "Registered Hospital",
+              facilityId: String(data.user.hospitalId),
+              createdAt: Date.now(),
+              lastLoginAt: Date.now(),
+              ...(role === "doctor" || role === "chief_doctor"
+                ? { doctorId: query, specialization: "General Medicine (MBBS)" }
+                : { workerId: query, designation: role === "receptionist" ? "Receptionist" : "ASHA Worker" }),
+            } as UserProfile;
+            await storeUserSession(profile, data.accessToken, passcode);
+            return profile;
+          }
+        }
+      } catch {
+        // Fall through to the local error when the server is unavailable.
+      }
+    }
+
     throw new Error(
       `No user found matching "${identifier}". Check your details or register a new account.`,
     );
