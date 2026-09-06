@@ -138,7 +138,7 @@ export function AuthScreen() {
 
   const handleSignIn = async () => {
     if (!signInIdentifier.trim()) {
-      setError("Please enter your Name, ID, or Phone number");
+      setError("Please enter your phone number, name, or staff ID");
       return;
     }
     if (!signInPasscode.trim()) {
@@ -390,7 +390,7 @@ export function AuthScreen() {
             <TextInput
               value={signInIdentifier}
               onChangeText={setSignInIdentifier}
-              placeholder={activeRole === "chief_doctor" || activeRole === "doctor" ? "e.g. Dr. Priya Sharma or DOC-1234" : "e.g. Sunita Devi or 9876543210"}
+              placeholder="e.g. 9876543210 or your staff ID"
               placeholderTextColor="#8CA19B"
               style={styles.input}
               autoCapitalize="none"

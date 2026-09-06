@@ -20,6 +20,10 @@ function verifyPassword(password: string, hash: string): boolean {
   return timingSafeEqual(keyBuffer, derivedKey);
 }
 
+function normalizePhone(phone: string): string {
+  return phone.replace(/[^\d+]/g, "").replace(/^00/, "+");
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -37,8 +41,16 @@ export class AuthService {
     role?: any;
     hospitalId?: number;
     email?: string;
+    phone?: string;
   }): Promise<{ accessToken: string; user: User }> {
-    let existing = await this.userRepo.findOne({ where: { openId: data.openId } });
+    const normalizedPhone = data.phone ? normalizePhone(data.phone) : null;
+    let existing = await this.userRepo.findOne({
+      where: [
+        { openId: data.openId },
+        ...(normalizedPhone ? [{ phone: normalizedPhone }] : []),
+        ...(data.email ? [{ email: data.email.trim().toLowerCase() }] : []),
+      ],
+    });
     if (existing) {
       throw new BadRequestException(`User with identifier "${data.openId}" already exists`);
     }
@@ -55,6 +67,7 @@ export class AuthService {
       role: data.role || "DOCTOR",
       hospitalId: data.hospitalId || 1,
       email: data.email || null,
+      phone: normalizedPhone,
       lastSignedIn: new Date(),
     });
 
@@ -63,10 +76,24 @@ export class AuthService {
     return { accessToken: token, user: savedUser };
   }
 
-  async validateUserWithPassword(openId: string, password?: string): Promise<User> {
-    let user = await this.userRepo.findOne({ where: { openId } });
+  async validateUserWithPassword(identifier: string, password?: string): Promise<User> {
+    const normalizedIdentifier = identifier.trim();
+    const phone = normalizePhone(normalizedIdentifier);
+    let user = await this.userRepo.findOne({
+      where: [
+        { openId: normalizedIdentifier },
+        { email: normalizedIdentifier.toLowerCase() },
+        { phone },
+      ],
+    });
     if (!user) {
-      user = this.userRepo.create({ openId, hospitalId: 1, name: openId, role: "DOCTOR" });
+      user = this.userRepo.create({
+        openId: normalizedIdentifier,
+        hospitalId: 1,
+        name: normalizedIdentifier,
+        role: "DOCTOR",
+        phone: /^\+?\d{7,15}$/.test(phone) ? phone : null,
+      });
       if (password) {
         user.passwordHash = hashPassword(password.trim());
       }
@@ -86,8 +113,8 @@ export class AuthService {
     return user;
   }
 
-  async login(openId: string, password?: string): Promise<{ accessToken: string; user: User }> {
-    const user = await this.validateUserWithPassword(openId, password);
+  async login(identifier: string, password?: string): Promise<{ accessToken: string; user: User }> {
+    const user = await this.validateUserWithPassword(identifier, password);
     const accessToken = await this.generateJwt(user);
     return { accessToken, user };
   }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Request, Logger } from "@nestjs/common";
+import { Controller, Post, Body, Get, UseGuards, Request, Logger, UnauthorizedException } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 
@@ -17,14 +17,19 @@ export class AuthController {
       role?: string;
       hospitalId?: number;
       email?: string;
+      phone?: string;
     },
   ) {
     return this.authService.register(body);
   }
 
   @Post("login")
-  async login(@Body() body: { openId: string; password?: string }) {
-    return this.authService.login(body.openId, body.password);
+  async login(@Body() body: { identifier?: string; phone?: string; openId?: string; password?: string }) {
+    const identifier = body.identifier ?? body.phone ?? body.openId;
+    if (!identifier?.trim()) {
+      throw new UnauthorizedException("Phone number or login identifier is required");
+    }
+    return this.authService.login(identifier, body.password);
   }
 
   @UseGuards(JwtAuthGuard)

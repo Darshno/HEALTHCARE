@@ -117,6 +117,10 @@ export function verifyPasscode(entered: string, storedHash: string): boolean {
   return simpleHash(entered.trim()) === storedHash;
 }
 
+function normalizePhone(phone: string): string {
+  return phone.replace(/[^\d+]/g, "").replace(/^00/, "+");
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Portal token sync
 // ──────────────────────────────────────────────────────────────────────────────
@@ -186,7 +190,11 @@ export async function saveRegisteredUser(profile: UserProfile): Promise<void> {
   }
 }
 
-export async function storeUserSession(profile: UserProfile, token?: string): Promise<void> {
+export async function storeUserSession(
+  profile: UserProfile,
+  token?: string,
+  password?: string,
+): Promise<void> {
   try {
     const updatedProfile = { ...profile, lastLoginAt: Date.now() };
     await AsyncStorage.setItem(USER_PROFILE_KEY, JSON.stringify(updatedProfile));
@@ -201,7 +209,10 @@ export async function storeUserSession(profile: UserProfile, token?: string): Pr
           const res = await fetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ openId: profile.id }),
+            body: JSON.stringify({
+              identifier: profile.phone ? normalizePhone(profile.phone) : profile.id,
+              password,
+            }),
           });
           if (res.ok) {
             const data = await res.json();
@@ -289,7 +300,33 @@ export async function createUserProfile(input: CreateUserInput): Promise<UserPro
     } as HealthWorkerProfile;
   }
 
-  await storeUserSession(profile);
+  const baseUrl = getBaseApiUrl();
+  let serverToken: string | undefined;
+  if (baseUrl) {
+    const serverResponse = await fetch(`${baseUrl}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        openId: input.phone ? normalizePhone(input.phone) : id,
+        name: input.name.trim(),
+        password: input.passcode.trim(),
+        role: input.role,
+        hospitalId: Number(input.facilityId) || 1,
+        phone: input.phone ? normalizePhone(input.phone) : undefined,
+        email: input.email?.trim() || undefined,
+      }),
+    });
+
+    if (!serverResponse.ok) {
+      const detail = await serverResponse.text().catch(() => "");
+      throw new Error(detail || "Unable to create account on the server.");
+    }
+
+    const serverData = (await serverResponse.json()) as { accessToken?: string };
+    serverToken = serverData.accessToken;
+  }
+
+  await storeUserSession(profile, serverToken, input.passcode.trim());
   return profile;
 }
 
@@ -304,7 +341,7 @@ export async function authenticateUser(
   const found = all.find((u) => {
     if (targetRole && u.role !== targetRole) return false;
     const matchesName = u.name.toLowerCase() === query || u.name.toLowerCase().includes(query);
-    const matchesPhone = u.phone?.replace(/\s+/g, "") === query.replace(/\s+/g, "");
+    const matchesPhone = u.phone && normalizePhone(u.phone) === normalizePhone(query);
 
     let matchesId = false;
     if (u.role === "chief_doctor" || u.role === "doctor") {
@@ -329,6 +366,6 @@ export async function authenticateUser(
     }
   }
 
-  await storeUserSession(found);
+  await storeUserSession(found, undefined, passcode);
   return found;
 }

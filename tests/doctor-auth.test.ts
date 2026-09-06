@@ -46,6 +46,12 @@ describe("Doctor Authentication & Profile Creation", () => {
     expect(doctor.name).toBe("Dr. Sunita Patel");
   });
 
+  it("authenticates existing doctor by phone number with correct PIN", async () => {
+    const doctor = await authenticateUser("987 654 3210", "1234", "doctor");
+    expect(doctor).toBeDefined();
+    expect(doctor.name).toBe("Dr. Sunita Patel");
+  });
+
   it("rejects login with wrong passcode", async () => {
     await expect(authenticateUser("MCI-99881", "9999", "doctor")).rejects.toThrow(
       "Incorrect PIN",
