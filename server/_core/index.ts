@@ -33,6 +33,7 @@ async function startServer() {
   const server = createServer(app);
 
   const rawAllowedOrigins = process.env.CORS_ORIGIN ?? [
+    "https://healthcare-ve5c.vercel.app",
     "https://healthcare-qu79.vercel.app",
     "http://localhost:8081",
     "http://127.0.0.1:8081",
