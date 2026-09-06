@@ -95,7 +95,7 @@ export function AuthScreen() {
   const [passcode, setPasscode] = useState("");
   // Chief doctor only
   const [hospitalName, setHospitalName] = useState("");
-  // Staff fields
+  // Staff fields (store as string to match facilityId type)
   const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
 
   const refreshHospitals = useCallback(async () => {
@@ -104,7 +104,9 @@ export function AuthScreen() {
       const list = await getHospitals();
       setHospitals(list);
       if (list.length > 0) {
-        setSelectedHospitalId((prev) => (prev && list.some((h) => h.id === prev)) ? prev : list[0].id);
+        // Convert hospital ID to string for consistency with facilityId
+        const firstId = String(list[0].id);
+        setSelectedHospitalId((prev) => (prev && list.some((h) => String(h.id) === prev)) ? prev : firstId);
       }
     } catch {
       setHospitals([]);
@@ -122,7 +124,7 @@ export function AuthScreen() {
     h.name.toLowerCase().includes(hospitalSearch.toLowerCase().trim()),
   );
 
-  const selectedHospital = hospitals.find((h) => h.id === selectedHospitalId) || hospitals[0];
+  const selectedHospital = hospitals.find((h) => String(h.id) === selectedHospitalId) || hospitals[0];
 
   const resetForm = () => {
     setName("");
@@ -166,7 +168,7 @@ export function AuthScreen() {
     try {
       if (activeRole === "chief_doctor") {
         let finalFacilityName = hospitalName.trim();
-        let finalFacilityId = selectedHospitalId;
+        let finalFacilityId: string;
 
         if (chiefHospitalMode === "new") {
           if (!finalFacilityName) {
@@ -174,10 +176,9 @@ export function AuthScreen() {
             setLoading(false);
             return;
           }
-          const tempId = `tmp-${Date.now()}`;
-          const createdHosp = await registerHospital(finalFacilityName, tempId);
+          const createdHosp = await registerHospital(finalFacilityName);
           finalFacilityName = createdHosp.name;
-          finalFacilityId = createdHosp.id;
+          finalFacilityId = String(createdHosp.id);
         } else {
           if (!selectedHospital) {
             setError("Please select a hospital from the dropdown");
@@ -185,7 +186,7 @@ export function AuthScreen() {
             return;
           }
           finalFacilityName = selectedHospital.name;
-          finalFacilityId = selectedHospital.id;
+          finalFacilityId = String(selectedHospital.id);
         }
 
         // Sign up chief doctor
@@ -200,7 +201,7 @@ export function AuthScreen() {
         await refreshHospitals();
       } else {
         // Staff doctor / asha / receptionist
-        const targetHospital = hospitals.find((h) => h.id === selectedHospitalId) || hospitals[0];
+        const targetHospital = hospitals.find((h) => String(h.id) === selectedHospitalId) || hospitals[0];
         if (!targetHospital) {
           setError("Please select your hospital from the dropdown");
           setLoading(false);
@@ -212,7 +213,7 @@ export function AuthScreen() {
           phone: phone.trim() || undefined,
           passcode: passcode.trim(),
           facilityName: targetHospital.name,
-          facilityId: targetHospital.id,
+          facilityId: String(targetHospital.id),
         });
       }
     } catch (err) {
@@ -355,12 +356,12 @@ export function AuthScreen() {
 
                   <ScrollView style={styles.dropdownList} nestedScrollEnabled>
                     {filteredHospitals.map((h) => {
-                      const isSelected = selectedHospitalId === h.id || (!selectedHospitalId && hospitals[0]?.id === h.id);
+                      const isSelected = selectedHospitalId === String(h.id) || (!selectedHospitalId && String(hospitals[0]?.id) === String(h.id));
                       return (
                         <Pressable
                           key={h.id}
                           onPress={() => {
-                            setSelectedHospitalId(h.id);
+                            setSelectedHospitalId(String(h.id));
                             setShowHospitalDropdown(false);
                             setHospitalSearch("");
                           }}
@@ -505,12 +506,12 @@ export function AuthScreen() {
 
                           <ScrollView style={styles.dropdownList} nestedScrollEnabled>
                             {filteredHospitals.map((h) => {
-                              const isSelected = selectedHospitalId === h.id;
+                              const isSelected = selectedHospitalId === String(h.id);
                               return (
                                 <Pressable
                                   key={h.id}
                                   onPress={() => {
-                                    setSelectedHospitalId(h.id);
+                                    setSelectedHospitalId(String(h.id));
                                     setShowHospitalDropdown(false);
                                   }}
                                   style={[styles.dropdownItem, isSelected && styles.dropdownItemSelected]}
@@ -590,12 +591,12 @@ export function AuthScreen() {
 
                       <ScrollView style={styles.dropdownList} nestedScrollEnabled>
                         {filteredHospitals.map((h) => {
-                          const isSelected = selectedHospitalId === h.id || (!selectedHospitalId && hospitals[0]?.id === h.id);
+                          const isSelected = selectedHospitalId === String(h.id) || (!selectedHospitalId && String(hospitals[0]?.id) === String(h.id));
                           return (
                             <Pressable
                               key={h.id}
                               onPress={() => {
-                                setSelectedHospitalId(h.id);
+                                setSelectedHospitalId(String(h.id));
                                 setShowHospitalDropdown(false);
                                 setHospitalSearch("");
                               }}

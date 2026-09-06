@@ -76,6 +76,7 @@ const redisConfig = hasRedis ? parseRedisUrl(process.env.REDIS_URL!) : null;
 
 import { BedsModule } from "./modules/beds/beds.module";
 import { AuditModule } from "./modules/audit/audit.module";
+import { HospitalModule } from "./modules/hospital/hospital.module";
 
 @Module({
   imports: [
@@ -86,7 +87,7 @@ import { AuditModule } from "./modules/audit/audit.module";
     ...(hasDb ? [TypeOrmModule.forFeature([TriageResult])] : []),
     ...(hasRedis ? [BullModule.forRoot({ redis: redisConfig! }), QueueModule] : []),
     ChatModule,
-    ...(hasDb ? [AuthModule, PatientModule, BedsModule, AuditModule, TeleconsultModule, FhirModule, HealthIdModule] : []),
+    ...(hasDb ? [AuthModule, PatientModule, BedsModule, AuditModule, TeleconsultModule, FhirModule, HealthIdModule, HospitalModule] : []),
   ],
 
   controllers: [
