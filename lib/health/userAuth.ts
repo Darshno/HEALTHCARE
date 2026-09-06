@@ -1,25 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-function getBaseApiUrl(): string {
-  if (typeof process !== "undefined" && process.env?.EXPO_PUBLIC_API_BASE_URL) {
-    return process.env.EXPO_PUBLIC_API_BASE_URL.replace(/\/$/, "");
-  }
-  if (typeof process !== "undefined" && process.env?.EXPO_PUBLIC_SERVER_URL) {
-    return process.env.EXPO_PUBLIC_SERVER_URL.replace(/\/$/, "");
-  }
-  if (typeof window !== "undefined" && window.location) {
-    const { protocol, hostname, port } = window.location;
-    const apiHostname = hostname.replace(/^8081-/, "3000-");
-    if (apiHostname !== hostname) {
-      return `${protocol}//${apiHostname}`;
-    }
-    if (port === "8081") {
-      return `${protocol}//${hostname}:3000`;
-    }
-    return window.location.origin;
-  }
-  return "";
-}
+import { getApiBaseUrl } from "@/constants/oauth";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Types
