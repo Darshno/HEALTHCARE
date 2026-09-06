@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState, useEffect, useCallback } from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -239,9 +240,11 @@ export function AuthScreen() {
       >
         {/* Header */}
         <View style={styles.brandHeader}>
-          <View style={styles.logoBadge}>
-            <MaterialIcons name="local-hospital" size={34} color="#087E7B" />
-          </View>
+          <Image
+            source={require("@/assets/images/logo.png")}
+            style={styles.brandLogoImage}
+            resizeMode="contain"
+          />
           <Text style={styles.brandTitle}>Rural Health Access</Text>
           <Text style={styles.brandSub}>Healthcare Management Platform</Text>
         </View>
@@ -687,6 +690,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F4F7F5" },
   scroll: { paddingHorizontal: 18, gap: 16 },
   brandHeader: { alignItems: "center", marginBottom: 4, gap: 6 },
+  brandLogoImage: { width: 90, height: 90, marginBottom: 2 },
   logoBadge: {
     width: 68, height: 68, borderRadius: 20, backgroundColor: "#E6F5F3",
     alignItems: "center", justifyContent: "center",

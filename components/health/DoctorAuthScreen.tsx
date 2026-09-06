@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -111,9 +112,11 @@ export function DoctorAuthScreen() {
         {/* Top Clinical Header */}
         <View style={styles.header}>
           <View style={styles.badgeContainer}>
-            <View style={styles.iconCircle}>
-              <MaterialIcons name="local-hospital" size={28} color="#087E7B" />
-            </View>
+            <Image
+              source={require("@/assets/images/logo.png")}
+              style={styles.headerLogoImage}
+              resizeMode="contain"
+            />
             <View style={styles.lockBadge}>
               <MaterialIcons name="lock" size={13} color="#9A5B00" />
               <Text style={styles.lockBadgeText}>Restricted Clinical Access</Text>
@@ -427,6 +430,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     marginBottom: 12,
+  },
+  headerLogoImage: {
+    width: 64,
+    height: 64,
   },
   iconCircle: {
     width: 54,
