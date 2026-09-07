@@ -24,6 +24,21 @@ function normalizePhone(phone: string): string {
   return phone.replace(/[^\d+]/g, "").replace(/^00/, "+");
 }
 
+function normalizeRole(role: unknown): User["role"] {
+  const roleMap: Record<string, User["role"]> = {
+    chief_doctor: "CHIEF_DOCTOR",
+    chief_doc: "CHIEF_DOCTOR",
+    doctor: "DOCTOR",
+    asha_worker: "ASHA_WORKER",
+    asha: "ASHA_WORKER",
+    receptionist: "RECEPTIONIST",
+    admin: "ADMIN",
+    patient: "PATIENT",
+  };
+  const normalized = typeof role === "string" ? roleMap[role.toLowerCase()] : undefined;
+  return normalized ?? "DOCTOR";
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -64,7 +79,7 @@ export class AuthService {
       openId: data.openId,
       name: data.name || data.openId,
       passwordHash,
-      role: data.role || "DOCTOR",
+      role: normalizeRole(data.role),
       hospitalId: data.hospitalId || 1,
       email: data.email || null,
       phone: normalizedPhone,
@@ -84,6 +99,7 @@ export class AuthService {
         { openId: normalizedIdentifier },
         { email: normalizedIdentifier.toLowerCase() },
         { phone },
+        { name: normalizedIdentifier },
       ],
       relations: ["hospital"],
     });
