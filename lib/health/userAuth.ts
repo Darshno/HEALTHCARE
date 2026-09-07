@@ -184,7 +184,7 @@ export async function storeUserSession(
     if (!activeToken) {
       // Try to acquire real server JWT token if available
       try {
-        const baseUrl = getBaseApiUrl();
+        const baseUrl = getApiBaseUrl();
         if (baseUrl) {
           const res = await fetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
@@ -280,7 +280,7 @@ export async function createUserProfile(input: CreateUserInput): Promise<UserPro
     } as HealthWorkerProfile;
   }
 
-  const baseUrl = getBaseApiUrl();
+  const baseUrl = getApiBaseUrl();
   let serverToken: string | undefined;
   if (baseUrl) {
     const serverResponse = await fetch(`${baseUrl}/api/auth/register`, {
@@ -334,7 +334,7 @@ export async function authenticateUser(
   });
 
   if (!found) {
-    const baseUrl = getBaseApiUrl();
+    const baseUrl = getApiBaseUrl();
     if (baseUrl) {
       try {
         const response = await fetch(`${baseUrl}/api/auth/login`, {
