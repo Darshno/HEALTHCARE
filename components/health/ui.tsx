@@ -85,12 +85,12 @@ export function SectionHeader({ title, action }: { title: string; action?: React
 
 export const commonStyles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F7F8F5" },
-  content: { paddingHorizontal: 16, paddingBottom: 28 },
-  card: { backgroundColor: "#FFFFFF", borderRadius: 18, padding: 16, shadowColor: "#18332F", shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 2 },
+  content: { paddingHorizontal: 18, paddingBottom: 32 },
+  card: { backgroundColor: "#FFFFFF", borderRadius: 14, padding: 18, shadowColor: "#18332F", shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 2 },
   eyebrow: { color: "#4A6560", fontSize: 12, fontWeight: "700", letterSpacing: 0.6, textTransform: "uppercase" },
-  title: { color: "#18332F", fontSize: 27, lineHeight: 34, fontWeight: "800" },
-  body: { color: "#54716B", fontSize: 14, lineHeight: 20 },
-  tiny: { color: "#6C817C", fontSize: 12, lineHeight: 17 },
+  title: { color: "#18332F", fontSize: 30, lineHeight: 38, fontWeight: "800" },
+  body: { color: "#3F5954", fontSize: 16, lineHeight: 24 },
+  tiny: { color: "#526A65", fontSize: 14, lineHeight: 20 },
 });
 
 const styles = StyleSheet.create({
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
   syncText: { fontSize: 11, fontWeight: "800" },
   liveBanner: { alignItems: "center", borderRadius: 11, flexDirection: "row", gap: 6, marginBottom: 12, paddingHorizontal: 11, paddingVertical: 8 },
   liveText: { flexShrink: 1, fontSize: 12, fontWeight: "800" },
-  button: { alignItems: "center", borderRadius: 14, borderWidth: 1, flexDirection: "row", gap: 8, justifyContent: "center", minHeight: 48, paddingHorizontal: 16 },
-  buttonText: { fontSize: 15, fontWeight: "800" },
+  button: { alignItems: "center", borderRadius: 12, borderWidth: 1, flexDirection: "row", gap: 8, justifyContent: "center", minHeight: 56, paddingHorizontal: 18 },
+  buttonText: { fontSize: 17, fontWeight: "800" },
   sectionHeader: { alignItems: "center", flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
   sectionTitle: { color: "#18332F", fontSize: 17, fontWeight: "800" },
 });

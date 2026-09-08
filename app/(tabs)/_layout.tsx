@@ -12,7 +12,7 @@ export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const { role } = useUserAuth();
   const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 56 + bottomPadding;
+  const tabBarHeight = 68 + bottomPadding;
 
   // Role-based tab visibility
   const isChief = role === "chief_doctor";
@@ -30,7 +30,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          paddingTop: 8,
+          paddingTop: 10,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
           backgroundColor: colors.background,

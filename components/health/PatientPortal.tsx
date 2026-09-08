@@ -356,8 +356,8 @@ export function PatientPortal() {
               </View>
             )}
 
-            {/* Quick Actions Grid */}
-            <Text style={styles.sectionHeader}>QUICK HEALTH ACTIONS</Text>
+            {/* Simple actions with one clear choice per row */}
+            <Text style={styles.sectionHeader}>What would you like to do?</Text>
             <View style={styles.actionsGrid}>
               <Pressable
                 onPress={() => { setActiveTab("appointments"); setShowBookModal(true); }}
@@ -366,8 +366,8 @@ export function PatientPortal() {
                 <View style={[styles.actionIconCircle, { backgroundColor: "#E6F5F3" }]}>
                   <MaterialIcons name="calendar-today" size={24} color="#087E7B" />
                 </View>
-                <Text style={styles.actionTitle}>Book Appointment</Text>
-                <Text style={styles.actionSub}>Schedule doctor consultation</Text>
+                <Text style={styles.actionTitle}>Book a doctor visit</Text>
+                <Text style={styles.actionSub}>Choose a hospital and time</Text>
               </Pressable>
 
               <Pressable
@@ -377,8 +377,8 @@ export function PatientPortal() {
                 <View style={[styles.actionIconCircle, { backgroundColor: "#F5EEFF" }]}>
                   <MaterialIcons name="medication" size={24} color="#7B4F9A" />
                 </View>
-                <Text style={styles.actionTitle}>Order Medicines</Text>
-                <Text style={styles.actionSub}>PHC stocks & refills</Text>
+                <Text style={styles.actionTitle}>Order medicines</Text>
+                <Text style={styles.actionSub}>Request a refill</Text>
               </Pressable>
 
               <Pressable
@@ -388,8 +388,8 @@ export function PatientPortal() {
                 <View style={[styles.actionIconCircle, { backgroundColor: "#FFF4E5" }]}>
                   <MaterialIcons name="folder-shared" size={24} color="#B66A00" />
                 </View>
-                <Text style={styles.actionTitle}>Health Records</Text>
-                <Text style={styles.actionSub}>ABHA card & history</Text>
+                <Text style={styles.actionTitle}>See my health records</Text>
+                <Text style={styles.actionSub}>Medicines, allergies, and visits</Text>
               </Pressable>
             </View>
           </View>
@@ -956,7 +956,7 @@ const styles = StyleSheet.create({
   right: 0,
   bottom: 0,
 
-  minHeight: 72,
+  minHeight: 88,
 
   backgroundColor: "#FFFFFF",
 
@@ -983,12 +983,12 @@ bottomNavItem: {
   flex: 1,
   alignItems: "center",
   justifyContent: "center",
-  paddingVertical: 8,
+  paddingVertical: 10,
   gap: 3,
 },
 
 bottomNavText: {
-  fontSize: 10,
+  fontSize: 12,
   fontWeight: "700",
   color: "#6C817C",
   textAlign: "center",
@@ -1025,7 +1025,7 @@ bottomNavTextActive: {
   },
   patientAvatarText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 19,
     fontWeight: "900",
   },
   badgeRow: {
@@ -1052,7 +1052,7 @@ bottomNavTextActive: {
     fontWeight: "900",
   },
   patientSub: {
-    fontSize: 11,
+    fontSize: 14,
     color: "#6C817C",
     marginTop: 2,
   },
@@ -1071,7 +1071,8 @@ bottomNavTextActive: {
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#B42318",
-    paddingVertical: 9,
+    minHeight: 52,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 10,
     marginBottom: 10,
@@ -1084,7 +1085,7 @@ bottomNavTextActive: {
   },
   emergencySosText: {
     color: "#FFFFFF",
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: "900",
     letterSpacing: 0.4,
   },
@@ -1116,7 +1117,7 @@ bottomNavTextActive: {
     fontWeight: "900",
   },
   contentScroll: {
-    padding: 16,
+    padding: 20,
     maxWidth: 720,
     width: "100%",
     alignSelf: "center",
@@ -1148,7 +1149,7 @@ bottomNavTextActive: {
     backgroundColor: "#12A875",
   },
   liveQueueTitle: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: "900",
     color: "#18332F",
     flex: 1,
@@ -1160,7 +1161,7 @@ bottomNavTextActive: {
     borderRadius: 8,
   },
   statusPillText: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: "900",
   },
   tokenBox: {
@@ -1179,13 +1180,13 @@ bottomNavTextActive: {
     letterSpacing: 0.6,
   },
   tokenNumber: {
-    fontSize: 42,
+    fontSize: 48,
     fontWeight: "900",
     color: "#18332F",
     marginVertical: 4,
   },
   tokenService: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: "700",
     color: "#54716B",
   },
@@ -1203,12 +1204,12 @@ bottomNavTextActive: {
     alignItems: "center",
   },
   queueStatValue: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "900",
     color: "#18332F",
   },
   queueStatLabel: {
-    fontSize: 10,
+    fontSize: 13,
     color: "#6C817C",
     marginTop: 2,
   },
@@ -1296,14 +1297,14 @@ bottomNavTextActive: {
     marginBottom: 14,
   },
   emptyQueueTitle: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: "900",
     color: "#18332F",
     marginBottom: 6,
     textAlign: "center",
   },
   emptyQueueSub: {
-    fontSize: 13,
+    fontSize: 16,
     color: "#54716B",
     textAlign: "center",
     lineHeight: 19,
@@ -1320,7 +1321,7 @@ bottomNavTextActive: {
   },
   joinQueueBtnText: {
     color: "#FFFFFF",
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: "900",
   },
   sectionHeader: {
@@ -1332,16 +1333,15 @@ bottomNavTextActive: {
     marginBottom: 6,
   },
   actionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     gap: 12,
   },
   actionCard: {
     flex: 1,
-    minWidth: "45%",
+    width: "100%",
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
-    padding: 14,
+    minHeight: 84,
+    padding: 16,
     borderWidth: 1,
     borderColor: "#E2ECE8",
   },
@@ -1354,12 +1354,12 @@ bottomNavTextActive: {
     marginBottom: 10,
   },
   actionTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "900",
     color: "#18332F",
   },
   actionSub: {
-    fontSize: 11,
+    fontSize: 14,
     color: "#6C817C",
     marginTop: 2,
   },
